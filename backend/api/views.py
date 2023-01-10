@@ -10,7 +10,7 @@ from products.serializers import ProductSerializer
 # Django Models
 
 
-@api_view(["GET", "POST"])
+@api_view(["POST"])
 def api_home(request, *args, **kwargs):
     """_summary_
 
@@ -22,7 +22,7 @@ def api_home(request, *args, **kwargs):
     Returns:
         _type_: _description_
     """
-
+    data = request.data
     instance = Product.objects.all().order_by("?").first()
     data = {}
     if instance:
