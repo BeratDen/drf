@@ -7,7 +7,7 @@ endpoint = "http://localhost:8000/api/"
 
 # API -> Application Programing Interface -> Emilate HTTP Get Request
 get_response = requests.post(
-    endpoint, params={"product_id": 123})  # HTTP request
+    endpoint, json={"title": "abc", "content": "Hello World", "price": 25.99})  # HTTP request
 # get_response = requests.get(endpoint, params={"abc": 123})
 
 # print(get_response.text)  # print raw text response
