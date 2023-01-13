@@ -12,27 +12,22 @@ from products.serializers import ProductSerializer
 
 @api_view(["POST"])
 def api_home(request, *args, **kwargs):
-    """_summary_
+    """ Create API
 
     DRF API View
 
     Args:
-        request (_type_): _description_
+        request (request): this method request a request
 
     Returns:
-        _type_: _description_
+        api: and create an instance a object and save to db
     """
-    data = request.data
-    instance = Product.objects.all().order_by("?").first()
-    data = {}
-    if instance:
-        # data = model_to_dict(instance, fields=[
-        #                      'id', 'title', 'price', 'sale_price'])
-        data = ProductSerializer(instance).data
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        # instance = serializer.save() # -> instance = form.save()
+        return Response(serializer.data)
 
-    return Response(
-        data
-    )
+    return Response({"invalid data": "not good data"}, status=400)
 
 
 def api_home2(request, *args, **kwargs):

@@ -10,6 +10,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
+            'id',
             'title',
             'content',
             'price',
@@ -27,9 +28,12 @@ class ProductSerializer(serializers.ModelSerializer):
             _type_: _description_
         """
 
-        print(obj.id)
         # obj.user -> user.username
         # obj.category -> category.any
+        if not hasattr(obj, 'id'):
+            return None
+        if not isinstance(obj, Product):
+            return None
         return obj.get_discount()
 
 
