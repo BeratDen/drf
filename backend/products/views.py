@@ -3,34 +3,50 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 # from django.http import Http404
 from django.shortcuts import get_object_or_404
-from api.mixins import StaffEditorPermissionMixin
+from api.mixins import (
+    StaffEditorPermissionMixin,
+    UserQuerySetMixin
+)
 from .models import Product
 from .serializers import ProductSerializer
 
 
 class ProductListCreateAPIView(
+    # UserQuerySetMixin,
     StaffEditorPermissionMixin,
     generics.ListCreateAPIView
 ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    # user_field = 'title'  # filter by -> field name
+    # allow_staff_view = True if its is true than staff have allow to see all products
 
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
-
         title = serializer.validated_data.get('title')
         content = serializer.validated_data.get('content') or None
         if content is None:
             content = title
 
-        serializer.save(content=content)
+        # forms.save() or model.save()
+        serializer.save(user=self.request.user, content=content)
         # send a Django signal
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        request = self.request
+        user = request.user
+        if not user.is_authenticated:
+            return Product.objects.none()
+        # print(request.user)
+        return qs.filter(user=request.user)
 
 
 product_create_view = ProductListCreateAPIView.as_view()
 
 
 class ProductDetailAPIView(
+    UserQuerySetMixin,
     StaffEditorPermissionMixin,
     generics.RetrieveAPIView
 ):
@@ -43,6 +59,7 @@ product_detail_view = ProductDetailAPIView.as_view()
 
 
 class ProductUpdateAPIView(
+    UserQuerySetMixin,
     StaffEditorPermissionMixin,
     generics.UpdateAPIView
 ):
@@ -64,6 +81,7 @@ product_update_view = ProductUpdateAPIView.as_view()
 
 
 class ProductDestroyAPIView(
+    UserQuerySetMixin,
     StaffEditorPermissionMixin,
     generics.DestroyAPIView
 ):
