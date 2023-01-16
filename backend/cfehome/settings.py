@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-
+import datetime
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'api',
     'products',
     'search',
+    'rest_framework_simplejwt'
 ]
 
 MIDDLEWARE = [
@@ -136,6 +137,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         "rest_framework.authentication.SessionAuthentication",
         "api.authentication.TokenAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"  # GET
@@ -148,4 +150,10 @@ ALGOLIA = {
     'APPLICATION_ID': 'EDK95X8MAM',
     'API_KEY': 'febc89569ba38e7954094ad9e85e65d9',
     'INDEX_PREFIX': 'brt'
+}
+
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ['Bearer'],
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(seconds=30),  # minutes=5
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(minutes=1),  # days = 1
 }
